@@ -1,0 +1,46 @@
+<!-- templates/company/offices.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Company Offices</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4" th:text="'🏢 Offices of ' + ${company.name}"></h1>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover shadow text-center align-middle">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="office : ${offices}">
+        <td th:text="${office.id}"></td>
+        <td th:text="${office.location}"></td>
+        <td th:text="${office.address}"></td>
+        <td>
+          <select class="form-select" onchange="location = this.value;">
+            <option selected disabled>Choose Action</option>
+            <option th:value="@{'/admin/employees/create?officeId=' + ${office.id}}">➕ Add Employee</option>
+            <option th:value="@{'/admin/employees/list?officeId=' + ${office.id}}">👥 View Employees</option>
+          </select>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center mt-4">
+    <a th:href="@{/admin/companies}" class="btn btn-outline-primary">⬅ Back to Companies</a>
+  </div>
+</div>
+
+</body>
+</html>

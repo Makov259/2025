@@ -1,0 +1,59 @@
+<!-- 4. checkout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shipment Checkout</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script>
+        function updateCostAndChange() {
+            const weight = parseFloat(document.getElementById("weight").value);
+            const deliveryType = document.getElementById("deliveryType").value;
+            const clientMoney = parseFloat(document.getElementById("clientMoney").value);
+            let cost = weight * 2.59;
+            if (deliveryType === "ADDRESS_DELIVERY") cost += 15;
+            document.getElementById("calculatedCost").value = cost.toFixed(2);
+            if (!isNaN(clientMoney)) {
+                const change = clientMoney - cost;
+                document.getElementById("change").value = change.toFixed(2);
+            }
+        }
+    </script>
+</head>
+<body class="container mt-5">
+<h2>💸 Finalize Shipment Delivery</h2>
+<form th:action="@{/admin/shipments/checkout}" method="post">
+    <input type="hidden" name="shipmentId" th:value="${shipment.id}" />
+    <input type="hidden" id="weight" th:value="${shipment.weight}" />
+    <p><strong>Courier:</strong> <span th:text="${shipment.delivery.courier.username}"></span></p>
+    <p><strong>Weight:</strong> <span th:text="${shipment.weight} + ' kg'"></span></p>
+    <p><strong>Destination:</strong> <span th:text="${shipment.deliveryAddress}"></span></p>
+
+    <div class="mb-3">
+        <label class="form-label">Delivery Type:</label>
+        <select id="deliveryType" name="deliveryType" class="form-select" onchange="updateCostAndChange()" required>
+            <option value="OFFICE_PICKUP">From Office (cheap)</option>
+            <option value="ADDRESS_DELIVERY">To Address (expensive)</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Calculated Cost (лв):</label>
+        <input type="text" id="calculatedCost" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Amount Paid by Client (лв):</label>
+        <input type="number" id="clientMoney" name="clientMoney" step="0.01" class="form-control" required oninput="updateCostAndChange()" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Change to Return (лв):</label>
+        <input type="text" id="change" class="form-control" readonly />
+    </div>
+
+    <button type="submit" class="btn btn-primary">✅ Confirm & Deliver</button>
+</form>
+<br>
+<a th:href="@{/admin/shipments}" class="btn btn-secondary">⬅ Back to Shipments</a>
+</body>
+</html>
